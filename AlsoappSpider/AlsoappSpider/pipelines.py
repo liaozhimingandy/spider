@@ -6,15 +6,22 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+
+from os import path
+
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exceptions import DropItem
 import scrapy
+from scrapy.pipelines.files import FilesPipeline
+from scrapy import Request
+from AlsoappSpider.items import QiushibaikeItem
 
 class AlsoappspiderPipeline:
     def process_item(self, item, spider):
         return item
 
 
+# 校花网图片下载管道
 class BeautyImageSavePipeline(ImagesPipeline):
 
     # 自定义请求头
@@ -46,6 +53,7 @@ class BeautyImageSavePipeline(ImagesPipeline):
         return file_name
 
 
+# 获取文件路径， 文件名， 后缀名
 def get_filePath_file_name_fileExt(file_url):
     """
     获取文件路径， 文件名， 后缀名
@@ -56,6 +64,31 @@ def get_filePath_file_name_fileExt(file_url):
     filepath, tmpfilename = os.path.split(file_url)
     shotname, extension = os.path.splitext(tmpfilename)
     return filepath, shotname, extension
+
+
+# 图片,视频下载管道
+class QiushibaikeFilePipeline(FilesPipeline):
+
+    def get_media_requests(self, item, info):
+        if isinstance(item, QiushibaikeItem):
+            # 请求头
+            heads = {
+                "USER_AGENT": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
+            }
+            # 此处需要注意,当时meta写错,则不会下载视频,如当时写成:meta['item']=item
+            print(f'正在保存文件:{item["src"]}')
+            yield Request(item['src'], headers=heads, meta=item)
+        else:
+            return super().get_media_requests(item, info)
+
+    def file_path(self, request, response=None, info=None, *, item=None):
+        if isinstance(item, QiushibaikeItem):
+            # 获取文件名称
+            file_name = path.basename(request.meta["src"])
+            return file_name
+
+        else:
+            return super().file_path(request, response, info, item=item)
 
 
 if __name__ == "__main__":
