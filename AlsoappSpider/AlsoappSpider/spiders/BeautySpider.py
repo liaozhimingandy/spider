@@ -1,11 +1,13 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-import logging
 
 from AlsoappSpider.items import BeautyItem
 
+
 class BeautyspiderSpider(CrawlSpider):
+    """ 校花网美女图片抓取通用爬虫 """
+
     name = 'BeautySpider'
     allowed_domains = ['521609.com']
     start_urls = ['http://www.521609.com/daxuemeinv/']
@@ -27,9 +29,7 @@ class BeautyspiderSpider(CrawlSpider):
         name = response.xpath("//div[@class='index_img list_center']/div[@class='title']/h2/text()").get()
         image_url = response\
             .xpath("//div[@class='index_img list_center']/div[@class='picbox']/a/img/@src").get()
-        #item['domain_id'] = response.xpath('//input[@id="sid"]/@value').get()
-        #item['name'] = response.xpath('//div[@id="name"]').get()
-        #item['description'] = response.xpath('//div[@id="description"]').get()
+
         # 若有空提取到空的url则跳过,并且打印
         if image_url is None:
             print(f"文件名:{name}的图片地址为空,请手工检查地址:{response.url}")
@@ -40,7 +40,8 @@ class BeautyspiderSpider(CrawlSpider):
         item['name'] = name
         item['image_url'] = image_url
         # print(f"名字:{name},图片下载地址:{image_url}")
-        logging.info(f"名字:{name},图片下载地址:{image_url}")
+        # 使用spider自带log工具打印日志
+        self.logger.info(f"名字:{name},图片下载地址:{image_url}")
         return item
 
 

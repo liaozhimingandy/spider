@@ -13,8 +13,14 @@ class AlsoappspiderItem(scrapy.Item):
 
 
 class BeautyItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
+    """ 这是下载校花网的item文件 """
+    
     name = scrapy.Field()
     image_url = scrapy.Field()
 
+
+class QiushibaikeItem(scrapy.Item):
+    """ 这是糗事百科的视频下载item """
+
+    content = scrapy.Field()  # 视频内容
+    src = scrapy.Field()    # 视频下载url

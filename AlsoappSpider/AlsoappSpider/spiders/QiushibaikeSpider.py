@@ -21,6 +21,8 @@ from AlsoappSpider.items import QiushibaikeItem
 
 
 class QiushibaikeSpider(CrawlSpider):
+    """ 糗事百科视频抓取通用爬虫 """
+
     name = 'qiushibaike'  # 定义此蜘蛛名称
     allowed_domains = ['qiushibaike.com']  # 包含允许此蜘蛛爬网的域
     start_urls = ['https://www.qiushibaike.com/']
